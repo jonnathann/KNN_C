@@ -98,11 +98,61 @@ int main() {
     struct KNN* knn = create_knn(4); // Exemplo, k=4
     knn_fit(knn, train_set, train_size);
 
+    // Arrays para armazenar as previsões e as probabilidades
+    int labels[test_size];  // Armazenar as previsões dos labels
+    double max_probabilities[test_size];  // Armazenar as probabilidades máximas para cada previsão
+
     // Testar o KNN no conjunto de teste
+    for (int i = 0; i < test_size; i++) {
+        double probabilities[3];  // Supondo que temos 3 classes no máximo
+        int predicted = knn_predict(knn, test_set[i].features, probabilities);
+        
+        // Armazenar o rótulo previsto
+        labels[i] = predicted;
+        
+        // Encontrar a maior probabilidade
+        double max_prob = probabilities[0];
+        for (int j = 1; j < 3; j++) {
+            if (probabilities[j] > max_prob) {
+                max_prob = probabilities[j];
+            }
+        }
+        
+        max_probabilities[i] = max_prob;  // Armazenar a probabilidade como percentual
+    }
+
+    // Imprimir as labels reais, as labels previstas e as probabilidades
+    printf("real: [");
+    for (int i = 0; i < test_size; i++) {
+        printf("%d", test_set[i].label);  // Imprimir a label real
+        if (i < test_size - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+
+    printf("prev: [");
+    for (int i = 0; i < test_size; i++) {
+        printf("%d", labels[i]);  // Imprimir a label prevista
+        if (i < test_size - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+
+    printf("prob: [");
+    for (int i = 0; i < test_size; i++) {
+        printf("%.2f", max_probabilities[i]);  // Imprimir a maior probabilidade em formato percentual
+        if (i < test_size - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+
+    // Calcular e imprimir a acurácia
     int correct = 0;
     for (int i = 0; i < test_size; i++) {
-        int predicted = knn_predict(knn, test_set[i].features);
-        if (predicted == test_set[i].label) {
+        if (labels[i] == test_set[i].label) {
             correct++;
         }
     }
@@ -128,5 +178,4 @@ int main() {
     free(knn);
 
     return 0;
-
 }

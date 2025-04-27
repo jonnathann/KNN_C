@@ -18,6 +18,6 @@ struct KNN* create_knn(int k);
 void knn_fit(struct KNN* knn, struct DATA* train_data, int length_data);
 
 // Faz uma previsão
-int knn_predict(struct KNN* knn, double* sample);
+int knn_predict(struct KNN* knn, double* sample, double* probabilities);
 
 #endif // KNN_H

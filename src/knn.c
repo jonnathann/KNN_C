@@ -35,7 +35,7 @@ void knn_fit(struct KNN* knn, struct DATA* data, int length_data) {
 }
 
 // Função para fazer a predição
-int knn_predict(struct KNN* knn, double* sample) {
+int knn_predict(struct KNN* knn, double* sample, double* probabilities) {
     struct DistanceLabel* distances = (struct DistanceLabel*)malloc(knn->train_size * sizeof(struct DistanceLabel));
 
     // Calcula todas as distâncias
@@ -53,7 +53,6 @@ int knn_predict(struct KNN* knn, double* sample) {
     qsort(distances, knn->train_size, sizeof(struct DistanceLabel), compare_distances);
 
     // Votação: contar quantos votos cada label recebeu
-    // (Aqui vamos assumir que os labels são pequenos inteiros positivos, tipo 0, 1, 2, etc)
     int max_label = 0;
     for (int i = 0; i < knn->k; i++) {
         if (distances[i].label > max_label) {
@@ -64,6 +63,12 @@ int knn_predict(struct KNN* knn, double* sample) {
     int* votes = (int*)calloc(max_label + 1, sizeof(int));
     for (int i = 0; i < knn->k; i++) {
         votes[distances[i].label]++;
+    }
+
+    // Calcular as probabilidades (porcentagem de votos por label)
+    double total_votes = (double)knn->k;
+    for (int i = 0; i <= max_label; i++) {
+        probabilities[i] = (double)votes[i] / total_votes;  // Probabilidade de cada label
     }
 
     // Achar o label mais votado
