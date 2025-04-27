@@ -95,7 +95,7 @@ int main() {
     struct DATA* test_set = read_csv("data/processed/test_data.csv", &test_size, num_dimensions);
 
     // Criar e treinar o KNN
-    struct KNN* knn = create_knn(3); // Exemplo, k=3
+    struct KNN* knn = create_knn(4); // Exemplo, k=4
     knn_fit(knn, train_set, train_size);
 
     // Testar o KNN no conjunto de teste
